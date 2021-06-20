@@ -30,8 +30,8 @@ class Board
 		sf::Texture *textPieces;
 	
 		sf::Sprite boardSprite;
-		std::vector<sf::Sprite> pieces;
 		
+		sf::Sprite pieces[64];
 		Board::Index board[64];
 		
 		void initializeTextures(sf::Texture *textBoard, sf::Texture *textPieces);
@@ -46,16 +46,26 @@ class Board
 		
 
 		/**
-		 * @return The piece at that given position
+		 * @return The piece index at that given position
 		 */
 		Board::Index operator()(int x, int y);
+		
+		/**
+		 * @returns The piece sprite at that given position
+		*/
+		sf::Sprite *getPieceSprite(int x, int y);
 		
 		/**
 		 * Set the piece at the given position
 		*/
 		void setPiece(int x, int y, Board::Index value);
+		/**
+		 * Moves a piece to a given spot after checking its valid
+		*/
+		void movePiece(int x1, int y1, int x2, int y2);
 		
-		/** Redraws the board based on its current state */
+		
+		/** Regenerates the board based on its current state */
 		void update();
 		
 		void draw(sf::RenderWindow &window);

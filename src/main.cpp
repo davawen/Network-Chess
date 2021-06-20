@@ -49,14 +49,53 @@ int main(int argc, char *argv[])
 	
 	board.setPiece(7, 2, Board::Index::Bishop | Board::Index::White);
 	
-    while (window.isOpen())
+	sf::Sprite *selectedPiece = nullptr;
+	sf::Vector2i selectedOffset;
+	sf::Vector2i startIndex;
+	
+    while(window.isOpen())
     {
         sf::Event event;
-        while (window.pollEvent(event))
+        while(window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
+			switch(event.type)
+			{
+				case sf::Event::Closed:
+					window.close();
+					break;
+				case sf::Event::MouseButtonPressed:
+				{
+					auto mousePos = sf::Mouse::getPosition(window);
+					startIndex = { mousePos.x / 100, mousePos.y / 100 };
+				
+					selectedPiece = board.getPieceSprite( startIndex.x, startIndex.y );
+					
+					selectedOffset = sf::Vector2i(selectedPiece->getPosition()) - mousePos;
+				}
+					break;
+				case sf::Event::MouseButtonReleased:
+				{
+					auto mousePos = sf::Mouse::getPosition(window); 
+					
+					if(mousePos.x > 0 && mousePos.x < 800 && mousePos.y > 0 && mousePos.y < 800)
+					{
+						board.movePiece(startIndex.x, startIndex.y, mousePos.x / 100, mousePos.y / 100);
+					}
+					
+					board.update();
+					
+					selectedPiece = nullptr;
+				}
+					break;
+				default:
+					break;
+			}
+		}
+		
+		if(selectedPiece != nullptr)
+		{
+			selectedPiece->setPosition(sf::Vector2f(sf::Mouse::getPosition(window) + selectedOffset));
+		}
 
         window.clear();
 		

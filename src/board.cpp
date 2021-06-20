@@ -78,6 +78,11 @@ Board::Board(sf::Texture *textBoard, sf::Texture *textPieces)
 	for(int i = 0; i < 64; i++)
 	{
 		this->board[i] = Board::Index::None;
+		
+		this->pieces[i] = sf::Sprite();
+		this->pieces[i].setTexture(*textPieces);
+		this->pieces[i].setOrigin(100.f, 100.f);
+		this->pieces[i].setScale(0.f, 0.f);
 	}
 	
 	this->update();
@@ -90,6 +95,13 @@ Board::Index Board::operator()(int x, int y)
 	return board[y * 8 + x];
 }
 
+sf::Sprite *Board::getPieceSprite(int x, int y)
+{
+	if(x < 0 || x >= 8 || y < 0 || y >= 8) throw std::invalid_argument("Index out of bounds");
+	
+	return &pieces[y*8 + x];
+}
+
 void Board::setPiece(int x, int y, Board::Index value)
 {
 	if(x < 0 || x >= 8 || y < 0 || y >= 8) throw std::invalid_argument("Index out of bounds");
@@ -99,21 +111,35 @@ void Board::setPiece(int x, int y, Board::Index value)
 	update();
 }
 
+void Board::movePiece(int x1, int y1, int x2, int y2)
+{
+	if(x1 < 0 || x1 >= 8 || y1 < 0 || y1 >= 8 || x2 < 0 || x2 >= 8 || y2 < 0 || y2 >= 8) throw std::invalid_argument("Index out of bounds");
+	
+	// Prevent autodeletion
+	if(x1 == x2 && y1 == y2) return;
+	
+	if(board[y1 * 8 + x1] != Board::Index::None)
+	{
+		board[y2 * 8 + x2] = board[y1 * 8 + x1];
+		board[y1 * 8 + x1] = Board::Index::None;
+	}
+}
+
 void Board::update()
 {
-	pieces.clear();
-	
 	for(int i = 0; i < 64; i++)
 	{
+		sf::Sprite *sprite = &pieces[i];
+		
 		if(board[i] != Board::Index::None)
 		{
-			sf::Sprite sprite;
-			sprite.setTexture(*textPieces);
-			sprite.setTextureRect(getPieceTexPos(board[i]));
-			sprite.setPosition( i%8 * 100, i/8 * 100 );
-			sprite.setScale(0.5f, 0.5f);
-			
-			pieces.push_back(sprite);
+			sprite->setTextureRect(getPieceTexPos(board[i]));
+			sprite->setPosition( i%8 * 100 + 50, i/8 * 100 + 50 );
+			sprite->setScale(0.5f, 0.5f);
+		}
+		else
+		{
+			sprite->setScale(0.f, 0.f);
 		}
 	}
 }
