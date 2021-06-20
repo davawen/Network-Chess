@@ -4,7 +4,7 @@ CXXLINKFLAGS = -pthread
 
 EXEC_NAME = main
 
-SRC_FILES = main.cpp board.cpp piece.cpp
+SRC_FILES = main.cpp board.cpp
 
 LIBS = sfml-audio sfml-graphics sfml-network sfml-system sfml-window
 

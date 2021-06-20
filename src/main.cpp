@@ -15,7 +15,6 @@
 #endif
 
 #include "board.hpp"
-#include "piece.hpp"
 
 namespace fs = std::filesystem;
 
@@ -42,10 +41,14 @@ namespace Date
 
 int main(int argc, char *argv[])
 {
-	sf::RenderWindow window(sf::VideoMode(800, 800), "SFML works!");
+	sf::RenderWindow window(sf::VideoMode(800, 800), "Chess");
 
-	Board board;
-
+	sf::Texture textureBoard, texturePieces;
+	
+	Board board{&textureBoard, &texturePieces};
+	
+	board.setPiece(7, 2, Board::Index::Bishop | Board::Index::White);
+	
     while (window.isOpen())
     {
         sf::Event event;
